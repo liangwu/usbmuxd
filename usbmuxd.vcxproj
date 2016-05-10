@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.props" Condition="Exists('packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\client.c" />
+    <ClCompile Include="src\conf.c" />
+    <ClCompile Include="src\config_msc.c" />
+    <ClCompile Include="src\device.c" />
+    <ClCompile Include="src\log.c" />
+    <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\preflight.c" />
+    <ClCompile Include="src\usb.c" />
+    <ClCompile Include="src\usb_win32.c" />
+    <ClCompile Include="src\utils.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\client.h" />
+    <ClInclude Include="src\conf.h" />
+    <ClInclude Include="src\config_msc.h" />
+    <ClInclude Include="src\device.h" />
+    <ClInclude Include="src\log.h" />
+    <ClInclude Include="src\preflight.h" />
+    <ClInclude Include="src\tcp.h" />
+    <ClInclude Include="src\usb.h" />
+    <ClInclude Include="src\usbmuxd-proto.h" />
+    <ClInclude Include="src\usb_win32.h" />
+    <ClInclude Include="src\utils.h" />
+    <ClInclude Include="src\winsock2-ext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E775C6D0-C295-4D09-9ADC-60FC95526993}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>usbmuxd</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\ext\libusb\include\libusb-1.0;$(ProjectDir)\ext\libusb-win32-bin-1.2.6.0\include;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\ext\libusb\include\libusb-1.0;$(ProjectDir)\ext\libusb-win32-bin-1.2.6.0\include;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\ext\libusb\include\libusb-1.0;$(ProjectDir)\ext\libusb-win32-bin-1.2.6.0\include;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\ext\libusb\include\libusb-1.0;$(ProjectDir)\ext\libusb-win32-bin-1.2.6.0\include;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <TreatSpecificWarningsAsErrors>4013</TreatSpecificWarningsAsErrors>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;$(ProjectDir)ext\libusb\MS32\dll\libusb-1.0.lib;$(ProjectDir)ext\libusb-win32-bin-1.2.6.0\lib\msvc\libusb.lib;$(ProjectDir)packages\pthreads.2.9.1.4\build\native\lib\v110\Win32\Release\dynamic\cdecl\libpthread.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy $(ProjectDir)packages\pthreads.redist.2.9.1.4\build\native\bin\v110\Win32\Release\dynamic\cdecl\libpthread.dll $(OutDir)
+copy $(ProjectDir)ext\libusb\MS32\dll\libusb-1.0.dll $(OutDir)
+copy $(ProjectDir)ext\libusb-win32-bin-1.2.6.0\bin\x86\libusb0_x86.dll $(OutDir)
+copy $(ProjectDir)packages\libiconv.redist.1.14.0.11\build\native\bin\v110\Win32\Release\dynamic\cdecl\libiconv.dll $(OutDir)
+copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\Win32\Release\dynamic\cdecl\zlib.dll $(OutDir)</Command>
+      <Outputs>$(OutDir)\libpthread.dll;$(OutDir)\libusb-1.0.dll;$(OutDir)\libusb0_x86.dll;$(OutDir)\libiconv.dll;$(OutDir)\zlib.dll;%(Outputs)</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;$(ProjectDir)ext\libusb\MS64\dll\libusb-1.0.lib;$(ProjectDir)ext\libusb-win32-bin-1.2.6.0\lib\msvc_x64\libusb.lib;$(ProjectDir)packages\pthreads.2.9.1.4\build\native\lib\v110\x64\Release\dynamic\cdecl\libpthread.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy $(ProjectDir)packages\pthreads.redist.2.9.1.4\build\native\bin\v110\x64\Release\dynamic\cdecl\libpthread.dll $(OutDir)
+copy $(ProjectDir)ext\libusb\MS64\dll\libusb-1.0.dll $(OutDir)
+copy $(ProjectDir)ext\libusb-win32-bin-1.2.6.0\bin\amd64\libusb0.dll $(OutDir)
+copy $(ProjectDir)packages\libiconv.redist.1.14.0.11\build\native\bin\v110\x64\Release\dynamic\cdecl\libiconv.dll $(OutDir)
+copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release\dynamic\cdecl\zlib.dll $(OutDir)</Command>
+      <Outputs>$(OutDir)\libpthread.dll;$(OutDir)\libusb-1.0.dll;$(OutDir)\libiconv.dll;$(OutDir)\zlib.dll;%(Outputs)</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <TreatSpecificWarningsAsErrors>4013</TreatSpecificWarningsAsErrors>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;$(ProjectDir)ext\libusb\MS32\dll\libusb-1.0.lib;$(ProjectDir)ext\libusb-win32-bin-1.2.6.0\lib\msvc\libusb.lib;$(ProjectDir)packages\pthreads.2.9.1.4\build\native\lib\v110\Win32\Release\dynamic\cdecl\libpthread.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy $(ProjectDir)packages\pthreads.redist.2.9.1.4\build\native\bin\v110\Win32\Release\dynamic\cdecl\libpthread.dll $(OutDir)
+copy $(ProjectDir)ext\libusb\MS32\dll\libusb-1.0.dll $(OutDir)
+copy $(ProjectDir)ext\libusb-win32-bin-1.2.6.0\bin\x86\libusb0_x86.dll $(OutDir)
+copy $(ProjectDir)packages\libiconv.redist.1.14.0.11\build\native\bin\v110\Win32\Release\dynamic\cdecl\libiconv.dll $(OutDir)
+copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\Win32\Release\dynamic\cdecl\zlib.dll $(OutDir)</Command>
+      <Outputs>$(OutDir)\libpthread.dll;$(OutDir)\libusb-1.0.dll;$(OutDir)\libusb0_x86.dll;$(OutDir)\libiconv.dll;$(OutDir)\zlib.dll;%(Outputs)</Outputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;$(ProjectDir)ext\libusb\MS64\dll\libusb-1.0.lib;$(ProjectDir)ext\libusb-win32-bin-1.2.6.0\lib\msvc_x64\libusb.lib;$(ProjectDir)packages\pthreads.2.9.1.4\build\native\lib\v110\x64\Release\dynamic\cdecl\libpthread.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>copy $(ProjectDir)packages\pthreads.redist.2.9.1.4\build\native\bin\v110\x64\Release\dynamic\cdecl\libpthread.dll $(OutDir)
+copy $(ProjectDir)ext\libusb\MS64\dll\libusb-1.0.dll $(OutDir)
+copy $(ProjectDir)ext\libusb-win32-bin-1.2.6.0\bin\amd64\libusb0.dll $(OutDir)
+copy $(ProjectDir)packages\libiconv.redist.1.14.0.11\build\native\bin\v110\x64\Release\dynamic\cdecl\libiconv.dll $(OutDir)
+copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release\dynamic\cdecl\zlib.dll $(OutDir)</Command>
+      <Outputs>$(OutDir)\libpthread.dll;$(OutDir)\libusb-1.0.dll;$(OutDir)\libiconv.dll;$(OutDir)\zlib.dll;%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>copy $(SolutionDir)ext\libusbK-3.0.7.0-bin\bin\dll\amd64\libusbK.dll $(OutDir)</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.targets" Condition="Exists('packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.targets')" />
+    <Import Project="packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets" Condition="Exists('packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" />
+    <Import Project="packages\libiconv.1.14.0.11\build\native\libiconv.targets" Condition="Exists('packages\libiconv.1.14.0.11\build\native\libiconv.targets')" />
+    <Import Project="packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets" Condition="Exists('packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" />
+    <Import Project="packages\pthreads.2.9.1.4\build\native\pthreads.targets" Condition="Exists('packages\pthreads.2.9.1.4\build\native\pthreads.targets')" />
+    <Import Project="packages\dirent.1.13.1\build\native\dirent.targets" Condition="Exists('packages\dirent.1.13.1\build\native\dirent.targets')" />
+    <Import Project="packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets" Condition="Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" />
+    <Import Project="packages\zlib.1.2.8.7\build\native\zlib.targets" Condition="Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" />
+    <Import Project="packages\libplist.redist.1.12.78\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.78\build\native\libplist.redist.targets')" />
+    <Import Project="packages\libplist.1.12.78\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.78\build\native\libplist.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.props'))" />
+    <Error Condition="!Exists('packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.getopt.1.0.20151130.1\build\native\fix8.dependencies.getopt.targets'))" />
+    <Error Condition="!Exists('packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libiconv.redist.1.14.0.11\build\native\libiconv.redist.targets'))" />
+    <Error Condition="!Exists('packages\libiconv.1.14.0.11\build\native\libiconv.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libiconv.1.14.0.11\build\native\libiconv.targets'))" />
+    <Error Condition="!Exists('packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets'))" />
+    <Error Condition="!Exists('packages\pthreads.2.9.1.4\build\native\pthreads.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\pthreads.2.9.1.4\build\native\pthreads.targets'))" />
+    <Error Condition="!Exists('packages\dirent.1.13.1\build\native\dirent.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\dirent.1.13.1\build\native\dirent.targets'))" />
+    <Error Condition="!Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets'))" />
+    <Error Condition="!Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.1.2.8.7\build\native\zlib.targets'))" />
+    <Error Condition="!Exists('packages\libplist.redist.1.12.78\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.78\build\native\libplist.redist.targets'))" />
+    <Error Condition="!Exists('packages\libplist.1.12.78\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.78\build\native\libplist.targets'))" />
+  </Target>
+</Project>
