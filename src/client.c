@@ -43,7 +43,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <netinet/tcp.h>
 #include <pthread.h>
