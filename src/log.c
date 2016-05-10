@@ -43,7 +43,11 @@
 #include "log.h"
 #include "utils.h"
 
+#ifdef _DEBUG
+unsigned int log_level = LL_FLOOD;
+#else
 unsigned int log_level = LL_WARNING;
+#endif
 
 #ifdef WIN32
 #else
