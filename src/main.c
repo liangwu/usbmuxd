@@ -50,7 +50,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <signal.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
