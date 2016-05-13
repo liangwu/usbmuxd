@@ -661,6 +661,7 @@ uint64_t usb_get_speed(struct usb_device *dev)
 	return dev->speed;
 }
 
+#ifndef WIN32
 void usb_get_fds(struct fdlist *list)
 {
 	const struct libusb_pollfd **usbfds;
@@ -677,6 +678,7 @@ void usb_get_fds(struct fdlist *list)
 	}
 	free(usbfds);
 }
+#endif
 
 void usb_autodiscover(int enable)
 {
