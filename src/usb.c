@@ -389,7 +389,12 @@ static int usb_device_add(libusb_device* dev)
 	// No blocking operation can follow: it may be run in the libusb hotplug callback and libusb will refuse any
 	// blocking call
 	if((res = libusb_open(dev, &handle)) != 0) {
-		usbmuxd_log(LL_WARNING, "Could not open device %d-%d: %d", bus, address, res);
+		if (res == LIBUSB_ERROR_NOT_SUPPORTED) {
+			usbmuxd_log(LL_WARNING, "Could not open device %d-%d. Libusb has reported it does not support the device. If on Windows, did you install the libusb drivers for the device?", bus, address, res);
+		}
+		else {
+			usbmuxd_log(LL_WARNING, "Could not open device %d-%d: %d", bus, address, res);
+		}
 		return -1;
 	}
 
