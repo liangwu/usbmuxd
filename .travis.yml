@@ -1,0 +1,26 @@
+dist: trusty
+language: cpp
+
+addons:
+  apt:
+    sources:
+    - build-essential
+    - automake
+    - libtool
+    - pkg-config
+    - libusb-1.0-0-dev
+    - libusb-1.0-0
+    - libplist3
+    - libplist-dev
+    - libplist-dev
+    - libimobiledevice6
+    - libimobiledevice-dev
+
+script:
+- "./autogen.sh"
+- "./configure --prefix=$HOME/out"
+- make
+
+after_success:
+- make install
+- tar -zcvf usbmuxd.tar.gz -C $HOME/out
