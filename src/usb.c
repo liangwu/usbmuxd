@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include <libusb.h>
+#include "usb_win32.h"
 
 #include "usb.h"
 #include "log.h"
@@ -404,6 +405,8 @@ static int usb_device_add(libusb_device* dev)
 		return -1;
 	}
 	if (current_config != desired_config) {
+#ifndef WIN32
+		// Detaching the kernel driver is not a Win32-concept; this functionality is not implemented on Windows.
 		struct libusb_config_descriptor *config;
 		if((res = libusb_get_active_config_descriptor(dev, &config)) != 0) {
 			usbmuxd_log(LL_NOTICE, "Could not get old configuration descriptor for device %d-%d: %s", bus, address, libusb_error_name(res));
@@ -424,13 +427,31 @@ static int usb_device_add(libusb_device* dev)
 			}
 			libusb_free_config_descriptor(config);
 		}
+#endif
 
 		usbmuxd_log(LL_INFO, "Setting configuration for device %d-%d, from %d to %d", bus, address, current_config, desired_config);
+#ifdef WIN32
+		char serial[40];
+		if ((res = libusb_get_string_descriptor_ascii(handle, devdesc.iSerialNumber, (uint8_t *)serial, 40)) <= 0) {
+			usbmuxd_log(LL_WARNING, "Could not get the UDID for device %d-%d: %d", bus, address, res);
+			libusb_close(handle);
+			return -1;
+		}
+
+		usb_win32_set_configuration(serial, desired_config);
+
+		// Because the change was done via libusb-win32, we need to refresh the device on libusb;
+		// otherwise, it will not pick up the new configuration and endpoints.
+		// For now, let the next loop do this for us.
+		libusb_close(handle);	
+		return -2;
+#else
 		if((res = libusb_set_configuration(handle, desired_config)) != 0) {
 			usbmuxd_log(LL_WARNING, "Could not set configuration %d for device %d-%d: %s", desired_config, bus, address, libusb_error_name(res));
 			libusb_close(handle);
 			return -1;
 		}
+#endif
 	}
 
 	struct libusb_config_descriptor *config;
@@ -791,7 +812,7 @@ static int LIBUSB_CALL usb_hotplug_cb(libusb_context *ctx, libusb_device *device
 }
 #endif
 
-int usb_init(void)
+int usb_initialize(void)
 {
 	int res;
 	const struct libusb_version* libusb_version_info = libusb_get_version();
@@ -805,6 +826,8 @@ int usb_init(void)
 	libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, (log_level >= LL_DEBUG ? LIBUSB_LOG_LEVEL_DEBUG: (log_level >= LL_WARNING ? LIBUSB_LOG_LEVEL_WARNING: LIBUSB_LOG_LEVEL_NONE)));
 #else
 	libusb_set_debug(NULL, (log_level >= LL_DEBUG ? LIBUSB_LOG_LEVEL_DEBUG: (log_level >= LL_WARNING ? LIBUSB_LOG_LEVEL_WARNING: LIBUSB_LOG_LEVEL_NONE)));
+#ifdef WIN32
+	usb_win32_init();
 #endif
 
 	if(res != 0) {
