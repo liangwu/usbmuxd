@@ -21,9 +21,9 @@
 #include <config.h>
 #endif
 
-#include <Windows.h>
 #ifdef _MSC_VER
 #include "config_msc.h"
+#include <Windows.h>
 #endif
 
 #include <stdio.h>

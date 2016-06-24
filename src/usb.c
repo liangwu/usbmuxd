@@ -30,7 +30,9 @@
 #include <string.h>
 
 #include <libusb.h>
+#ifdef WIN32
 #include "usb_win32.h"
+#endif
 
 #include "usb.h"
 #include "log.h"
