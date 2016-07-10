@@ -405,7 +405,7 @@ static int usb_device_add(libusb_device* dev)
 	// blocking call
 	if((res = libusb_open(dev, &handle)) != 0) {
 		if (res == LIBUSB_ERROR_NOT_SUPPORTED) {
-			usbmuxd_log(LL_WARNING, "Could not open device %d-%d. Libusb has reported it does not support the device. If on Windows, did you install the libusb drivers for the device?", bus, address, res);
+			usbmuxd_log(LL_WARNING, "Could not open device %d-%d. Libusb has reported it does not support the device. If on Windows, did you install the libusb drivers for the device?", bus, address, libusb_strerror(res));
 		}
 		else {
 			usbmuxd_log(LL_WARNING, "Could not open device %d-%d: %d", bus, address, libusb_error_name(res));
@@ -452,7 +452,7 @@ static int usb_device_add(libusb_device* dev)
 #ifdef WIN32
 		char serial[40];
 		if ((res = libusb_get_string_descriptor_ascii(handle, devdesc.iSerialNumber, (uint8_t *)serial, 40)) <= 0) {
-			usbmuxd_log(LL_WARNING, "Could not get the UDID for device %d-%d: %d", bus, address, res);
+			usbmuxd_log(LL_WARNING, "Could not get the UDID for device %d-%d: %s", bus, address, libusb_strerror(res));
 			libusb_close(handle);
 			return -1;
 		}
