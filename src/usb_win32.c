@@ -22,6 +22,33 @@ void usb_win32_init()
 	usb_find_devices(); /* find all connected devices */
 }
 
+int usb_win32_get_configuration(const char serial[], uint8_t *configuration)
+{
+	usbmuxd_log(LL_INFO, "Getting the configuration for device %s using libusb-win32", serial);
+
+	usb_dev_handle* device = usb_win32_open(serial);
+
+	if (device == NULL) {
+		usbmuxd_log(LL_INFO, "Could not find the device %s using libusb-win32", serial);
+		return -1;
+	}
+
+	byte config = -1;
+	int res = usb_control_msg(device, USB_RECIP_DEVICE | USB_ENDPOINT_IN, USB_REQ_GET_CONFIGURATION, 0, 0, &config, 1, 5000 /* LIBUSB_DEFAULT_TIMEOUT */);
+
+	if (res < 0) {
+		usbmuxd_log(LL_ERROR, "Could not get the configuration for device %s using libusb-win32: %d", serial, res);
+		return res;
+	}
+	else {
+		*configuration = (uint8_t)config;
+		usbmuxd_log(LL_INFO, "The current configuration for device %s is %d", serial, config);
+	}
+
+	res = usb_close(device);
+	return res;
+}
+
 void usb_win32_set_configuration(const char serial[], uint8_t configuration)
 {
 	usbmuxd_log(LL_INFO, "Setting configuration for device %s using libusb-win32", serial, configuration);
@@ -72,15 +99,17 @@ usb_dev_handle *usb_win32_open(const char serial[])
 
 			if (strcmp(dev_serial, serial) != 0)
 			{
-				usbmuxd_log(LL_INFO, "The not get the UDID for device %d, %s, on bus %d does not match teh requested UDID %s. Skipping", dev->devnum, dev_serial, bus->location, serial);
+				usbmuxd_log(LL_INFO, "The UDID for device %d, %s, on bus %d does not match the requested UDID %s. Skipping", dev->devnum, dev_serial, bus->location, serial);
 				usb_close(dev);
 				continue;
 			}
 
+			usbmuxd_log(LL_INFO, "Found a match on bus %d device %d for serial %s.", bus->location, dev->devnum, serial);
 			return handle;
 		}
 	}
 
+	usbmuxd_log(LL_INFO, "A device with serial %s could not be found using libusb-win32", serial);
 	return NULL;
 }
 #endif
