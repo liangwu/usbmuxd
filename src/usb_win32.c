@@ -4,8 +4,13 @@
 #include <lusb0_usb.h>
 #include "log.h"
 #include "usb.h"
+#include <Windows.h>
 
 usb_dev_handle *usb_win32_open(const char serial[]);
+
+// Used to protect the list of busses and devices, parallel access is not allowed on
+// those objects.
+CRITICAL_SECTION usb_lock;
 
 void usb_win32_init()
 {
@@ -20,6 +25,9 @@ void usb_win32_init()
 
 	usb_find_busses(); /* find all busses */
 	usb_find_devices(); /* find all connected devices */
+
+	// Intialize the critical section
+	InitializeCriticalSection(&usb_lock);
 }
 
 int usb_win32_get_configuration(const char serial[], uint8_t *configuration)
@@ -72,6 +80,8 @@ usb_dev_handle *usb_win32_open(const char serial[])
 
 	usbmuxd_log(LL_INFO, "Finding device %s using libusb-win32", serial);
 
+	EnterCriticalSection(&usb_lock);
+
 	bus = usb_get_busses();
 
 	for (bus; bus; bus = bus->next)
@@ -105,11 +115,13 @@ usb_dev_handle *usb_win32_open(const char serial[])
 			}
 
 			usbmuxd_log(LL_INFO, "Found a match on bus %d device %d for serial %s.", bus->location, dev->devnum, serial);
+			LeaveCriticalSection(&usb_lock);
 			return handle;
 		}
 	}
 
 	usbmuxd_log(LL_INFO, "A device with serial %s could not be found using libusb-win32", serial);
+	LeaveCriticalSection(&usb_lock);
 	return NULL;
 }
 #endif
