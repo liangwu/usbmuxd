@@ -65,6 +65,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include "usbmuxd-proto.h"
+#include <libusb.h>
 
 static const char *socket_path = "/var/run/usbmuxd";
 static const char *lockfile = "/var/run/usbmuxd.pid";
@@ -464,6 +465,7 @@ static void usage()
 	printf("Expose a socket to multiplex connections from and to iOS devices.\n\n");
 	printf("  -h, --help\t\tPrint this message.\n");
 	printf("  -v, --verbose\t\tBe verbose (use twice or more to increase).\n");
+	printf("  -u, --verbose-usb\tEnable libusb logging.\n");
 	printf("  -f, --foreground\tDo not daemonize (implies one -v).\n");
 	printf("  -U, --user USER\tChange to this user after startup (needs USB privileges).\n");
 	printf("  -n, --disable-hotplug\tDisables automatic discovery of devices on hotplug.\n");
@@ -496,6 +498,7 @@ static void parse_opts(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{"foreground", no_argument, NULL, 'f'},
 		{"verbose", no_argument, NULL, 'v'},
+		{"verbose-usb", no_argument, NULL, 'u' },
 		{"user", required_argument, NULL, 'U'},
 		{"disable-hotplug", no_argument, NULL, 'n'},
 		{"enable-exit", no_argument, NULL, 'z'},
@@ -536,6 +539,9 @@ static void parse_opts(int argc, char **argv)
 			break;
 		case 'v':
 			++verbose;
+			break;
+		case 'u':
+			libusb_set_debug(NULL, verbose);
 			break;
 		case 'V':
 			printf("%s\n", PACKAGE_STRING);
