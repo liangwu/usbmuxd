@@ -75,7 +75,14 @@ int should_exit;
 int should_discover;
 int use_logfile = 0;
 
+#if DEBUG || _DEBUG
+static int verbose = 255;
+static int libusb_verbose = 255;
+#else
 static int verbose = 0;
+static int libusb_verbose = 0;
+#endif
+
 static int foreground = 0;
 static int drop_privileges = 0;
 static const char *drop_user = NULL;
@@ -499,7 +506,7 @@ static void parse_opts(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{"foreground", no_argument, NULL, 'f'},
 		{"verbose", no_argument, NULL, 'v'},
-		{"verbose-usb", no_argument, NULL, 'u' },
+		{"verbose-usb", no_argument, NULL, 'w' },
 		{"user", required_argument, NULL, 'U'},
 		{"disable-hotplug", no_argument, NULL, 'n'},
 		{"enable-exit", no_argument, NULL, 'z'},
@@ -518,11 +525,11 @@ static void parse_opts(int argc, char **argv)
 	int c;
 
 #ifdef HAVE_SYSTEMD
-	const char* opts_spec = "hfvVuU:xXsnzl:";
+	const char* opts_spec = "hfvVwuU:xXsnzl:";
 #elif HAVE_UDEV
-	const char* opts_spec = "hfvVuU:xXnzl:";
+	const char* opts_spec = "hfvVwuU:xXnzl:";
 #else
-	const char* opts_spec = "hfvVU:xXnzl:";
+	const char* opts_spec = "hfvVwU:xXnzl:";
 #endif
 
 	while (1) {
@@ -541,8 +548,8 @@ static void parse_opts(int argc, char **argv)
 		case 'v':
 			++verbose;
 			break;
-		case 'u':
-			libusb_set_debug(NULL, verbose);
+		case 'w':
+			libusb_verbose = 255;
 			break;
 		case 'V':
 			printf("%s\n", PACKAGE_STRING);
@@ -627,7 +634,9 @@ int main(int argc, char *argv[])
 #else
     if (!foreground && !use_logfile) {
 		verbose += LL_WARNING;
+#ifndef WIN32
 		log_enable_syslog();
+#endif
 	} else {
 		verbose += LL_NOTICE;
 	}
@@ -838,6 +847,7 @@ int main(int argc, char *argv[])
 	client_init();
 	device_init();
 	usbmuxd_log(LL_INFO, "Initializing USB");
+	usb_set_log_level(libusb_verbose);
 	if((res = usb_initialize()) < 0)
 		goto terminate;
 
