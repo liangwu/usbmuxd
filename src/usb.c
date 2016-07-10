@@ -53,6 +53,8 @@
 // Apples usbmuxd, at least.
 #define NUM_RX_LOOPS 3
 
+int libusb_verbose = 0;
+
 struct usb_device {
 	libusb_device_handle *dev;
 	uint8_t bus, address;
@@ -73,6 +75,16 @@ static struct timeval next_dev_poll_time;
 static int devlist_failures;
 static int device_polling;
 static int device_hotplug = 1;
+
+void usb_set_log_level(int level)
+{
+	libusb_verbose = level;
+}
+
+int usb_get_log_level(void)
+{
+	return libusb_verbose;
+}
 
 static void usb_disconnect(struct usb_device *dev)
 {
@@ -829,6 +841,10 @@ int usb_initialize(void)
 	devlist_failures = 0;
 	device_polling = 1;
 	res = libusb_init(NULL);
+
+	if (libusb_verbose > 0) {
+		libusb_set_debug(NULL, libusb_verbose);
+	}
 
 #ifdef WIN32
 	usb_win32_init();
