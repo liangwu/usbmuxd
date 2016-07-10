@@ -11,9 +11,12 @@ void usb_win32_init()
 {
 	usb_init();
 
-#if _DEBUG
-	usb_set_debug(255);
-#endif
+	// Initialize the log level
+	int libusb_verbose = usb_get_log_level();
+
+	if (libusb_verbose > 0) {
+		usb_set_debug(libusb_verbose);
+	}
 
 	usb_find_busses(); /* find all busses */
 	usb_find_devices(); /* find all connected devices */
