@@ -50,6 +50,8 @@
 
 struct usb_device;
 
+void usb_set_log_level(int level);
+int usb_get_log_level(void);
 int usb_initialize(void);
 void usb_shutdown(void);
 const char *usb_get_serial(struct usb_device *dev);
