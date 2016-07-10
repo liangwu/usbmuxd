@@ -73,7 +73,14 @@ static const char *lockfile = "/var/run/usbmuxd.pid";
 int should_exit;
 int should_discover;
 
+#if DEBUG || _DEBUG
+static int verbose = 255;
+static int libusb_verbose = 255;
+#else
 static int verbose = 0;
+static int libusb_verbose = 0;
+#endif
+
 static int foreground = 0;
 static int drop_privileges = 0;
 static const char *drop_user = NULL;
@@ -496,7 +503,7 @@ static void parse_opts(int argc, char **argv)
 		{"help", 0, NULL, 'h'},
 		{"foreground", 0, NULL, 'f'},
 		{"verbose", 0, NULL, 'v'},
-		{"verbose-usb", 0, NULL, 'u' },
+		{"verbose-usb", 0, NULL, 'w' },
 		{"user", 1, NULL, 'U'},
 		{"disable-hotplug", 0, NULL, 'n'},
 		{"enable-exit", 0, NULL, 'z'},
@@ -514,11 +521,11 @@ static void parse_opts(int argc, char **argv)
 	int c;
 
 #ifdef HAVE_SYSTEMD
-	const char* opts_spec = "hfvVuU:xXsnz";
+	const char* opts_spec = "hfvVwuU:xXsnz";
 #elif HAVE_UDEV
-	const char* opts_spec = "hfvVuU:xXnz";
+	const char* opts_spec = "hfvVwuU:xXnz";
 #else
-	const char* opts_spec = "hfvVU:xXnz";
+	const char* opts_spec = "hfvVwU:xXnz";
 #endif
 
 	while (1) {
@@ -537,8 +544,8 @@ static void parse_opts(int argc, char **argv)
 		case 'v':
 			++verbose;
 			break;
-		case 'u':
-			libusb_set_debug(NULL, verbose);
+		case 'w':
+			libusb_verbose = 255;
 			break;
 		case 'V':
 			printf("%s\n", PACKAGE_STRING);
@@ -602,16 +609,14 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-#ifdef WIN32
-	verbose += LL_NOTICE;
-#else
 	if (!foreground) {
 		verbose += LL_WARNING;
+#ifndef WIN32
 		log_enable_syslog();
+#endif
 	} else {
 		verbose += LL_NOTICE;
 	}
-#endif
 
 	/* set log level to specified verbosity */
 	log_level = verbose;
@@ -818,6 +823,7 @@ int main(int argc, char *argv[])
 	client_init();
 	device_init();
 	usbmuxd_log(LL_INFO, "Initializing USB");
+	usb_set_log_level(libusb_verbose);
 	if((res = usb_initialize()) < 0)
 		goto terminate;
 
