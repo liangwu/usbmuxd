@@ -103,14 +103,14 @@ usb_dev_handle *usb_win32_open(const char serial[])
 
 			if(ret < 0) {
 				usbmuxd_log(LL_INFO, "Could not get the UDID for device %d on bus %d using libusb-win32. Skipping", dev->devnum, bus->location);
-				usb_close(dev);
+				usb_close(handle);
 				continue;
 			}
 
 			if (strcmp(dev_serial, serial) != 0)
 			{
 				usbmuxd_log(LL_INFO, "The UDID for device %d, %s, on bus %d does not match the requested UDID %s. Skipping", dev->devnum, dev_serial, bus->location, serial);
-				usb_close(dev);
+				usb_close(handle);
 				continue;
 			}
 
