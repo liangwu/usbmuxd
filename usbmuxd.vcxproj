@@ -238,8 +238,8 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Import Project="packages\dirent.1.13.1\build\native\dirent.targets" Condition="Exists('packages\dirent.1.13.1\build\native\dirent.targets')" />
     <Import Project="packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets" Condition="Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" />
     <Import Project="packages\zlib.1.2.8.7\build\native\zlib.targets" Condition="Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" />
-    <Import Project="packages\libplist.redist.1.12.78\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.78\build\native\libplist.redist.targets')" />
-    <Import Project="packages\libplist.1.12.78\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.78\build\native\libplist.targets')" />
+    <Import Project="packages\libplist.redist.1.12.113\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" />
+    <Import Project="packages\libplist.1.12.113\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.113\build\native\libplist.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -254,7 +254,7 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Error Condition="!Exists('packages\dirent.1.13.1\build\native\dirent.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\dirent.1.13.1\build\native\dirent.targets'))" />
     <Error Condition="!Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets'))" />
     <Error Condition="!Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.1.2.8.7\build\native\zlib.targets'))" />
-    <Error Condition="!Exists('packages\libplist.redist.1.12.78\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.78\build\native\libplist.redist.targets'))" />
-    <Error Condition="!Exists('packages\libplist.1.12.78\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.78\build\native\libplist.targets'))" />
+    <Error Condition="!Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.113\build\native\libplist.redist.targets'))" />
+    <Error Condition="!Exists('packages\libplist.1.12.113\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.113\build\native\libplist.targets'))" />
   </Target>
 </Project>
