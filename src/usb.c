@@ -43,6 +43,19 @@
 #define HAVE_LIBUSB_HOTPLUG_API 1
 #endif
 
+#if !defined(LIBUSB_API_VERSION) || LIBUSB_API_VERSION < 0x01000103
+#include <stdio.h>
+
+// On Linux, we compile using Ubuntu Precise, and libusb_strerror is not available on the version of
+// libusb-1.0 that ships with Precise. In that case, we just convert the error code to a number
+const char* libusb_strerror(int errcode)
+{
+    char str[3];
+    snprintf(str, 3, "%d", errcode);
+    return str;
+}
+#endif
+
 // interval for device connection/disconnection polling, in milliseconds
 // we need this because there is currently no asynchronous device discovery mechanism in libusb
 #define DEVICE_POLL_TIME 1000
