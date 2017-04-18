@@ -30,6 +30,7 @@
 
 #ifdef _MSC_VER
 #include "config_msc.h"
+#include <direct.h>
 #endif
 
 #ifdef WIN32
@@ -779,11 +780,13 @@ int main(int argc, char *argv[])
 	}
 
 	// make sure permission bits are set correctly
+#ifndef _MSC_VER
 	if (fst.st_mode != 02775) {
 		if (chmod(userprefdir, 02775) < 0) {
 			usbmuxd_log(LL_WARNING, "chmod(%s, 02775) failed: %s", userprefdir, strerror(errno));
 		}
 	}
+#endif
 #endif
 
 #ifdef WIN32
