@@ -133,7 +133,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;HAVE_LIBIMOBILEDEVICE</PreprocessorDefinitions>
       <TreatSpecificWarningsAsErrors>4013</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
@@ -156,7 +156,7 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\Win32\Relea
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32;HAVE_LIBIMOBILEDEVICE</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,7 +180,7 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;_USE_32BIT_TIME_T;HAVE_LIBIMOBILEDEVICE</PreprocessorDefinitions>
       <TreatSpecificWarningsAsErrors>4013</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
@@ -207,7 +207,7 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\Win32\Relea
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;WIN32;HAVE_LIBIMOBILEDEVICE</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -240,6 +240,8 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Import Project="packages\zlib.1.2.8.7\build\native\zlib.targets" Condition="Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" />
     <Import Project="packages\libplist.redist.1.12.113\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" />
     <Import Project="packages\libplist.1.12.113\build\native\libplist.targets" Condition="Exists('packages\libplist.1.12.113\build\native\libplist.targets')" />
+    <Import Project="packages\libimobiledevice.redist.1.2.1.100\build\native\libimobiledevice.redist.targets" Condition="Exists('packages\libimobiledevice.redist.1.2.1.100\build\native\libimobiledevice.redist.targets')" />
+    <Import Project="packages\libimobiledevice.1.2.1.100\build\native\libimobiledevice.targets" Condition="Exists('packages\libimobiledevice.1.2.1.100\build\native\libimobiledevice.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -256,5 +258,7 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Error Condition="!Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.1.2.8.7\build\native\zlib.targets'))" />
     <Error Condition="!Exists('packages\libplist.redist.1.12.113\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.1.12.113\build\native\libplist.redist.targets'))" />
     <Error Condition="!Exists('packages\libplist.1.12.113\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.1.12.113\build\native\libplist.targets'))" />
+    <Error Condition="!Exists('packages\libimobiledevice.redist.1.2.1.100\build\native\libimobiledevice.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.redist.1.2.1.100\build\native\libimobiledevice.redist.targets'))" />
+    <Error Condition="!Exists('packages\libimobiledevice.1.2.1.100\build\native\libimobiledevice.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.1.2.1.100\build\native\libimobiledevice.targets'))" />
   </Target>
 </Project>
