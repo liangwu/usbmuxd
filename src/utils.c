@@ -42,6 +42,8 @@
 #include <WinSock2.h>
 #include <windows.h>
 #include "winsock2-ext.h"
+#else
+#include <errno.h>
 #endif
 
 #include "utils.h"
