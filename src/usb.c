@@ -531,7 +531,7 @@ static int usb_device_add(libusb_device* dev)
 
 	transfer = libusb_alloc_transfer(0);
 	if(!transfer) {
-		usbmuxd_log(LL_WARNING, "Failed to allocate transfer for device %d-%d: %d", bus, address, res);
+		usbmuxd_log(LL_WARNING, "Failed to allocate transfer for device %d-%d: %s", bus, address, libusb_strerror(res));
 		libusb_close(handle);
 		free(usbdev);
 		return -1;
