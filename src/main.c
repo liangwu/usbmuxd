@@ -113,6 +113,7 @@ static socket_handle create_socket(void) {
 	socket_handle listenfd;
 
 #ifdef WIN32
+	int ret;
 	WSADATA wsaData = { 0 };
 
 	// Initialize Winsock
