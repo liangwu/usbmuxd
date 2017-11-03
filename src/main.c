@@ -480,7 +480,7 @@ static void usage()
 	printf("OPTIONS:\n");
 	printf("  -h, --help\t\tPrint this message.\n");
 	printf("  -v, --verbose\t\tBe verbose (use twice or more to increase).\n");
-	printf("  -u, --verbose-usb\tEnable libusb logging.\n");
+	printf("  -w, --verbose-usb\tEnable libusb logging.\n");
 	printf("  -f, --foreground\tDo not daemonize (implies one -v).\n");
 	printf("  -U, --user USER\tChange to this user after startup (needs USB privileges).\n");
 	printf("  -n, --disable-hotplug\tDisables automatic discovery of devices on hotplug.\n");
