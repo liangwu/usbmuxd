@@ -40,6 +40,8 @@
 #else
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <sys/resource.h>
 #include <pwd.h>
 #include <grp.h>
@@ -83,6 +85,7 @@ static int libusb_verbose = 0;
 #endif
 
 static int foreground = 0;
+static int tcp = 0;
 static int drop_privileges = 0;
 static const char *drop_user = NULL;
 static int opt_disable_hotplug = 0;
@@ -101,8 +104,8 @@ static int report_to_parent = 0;
 
 static socket_handle create_socket(void) {
 	struct sockaddr_un bind_addr;
+	struct sockaddr_in tcp_addr;
 	socket_handle listenfd;
-	int ret;
 
 #ifdef WIN32
 	WSADATA wsaData = { 0 };
@@ -121,15 +124,23 @@ static socket_handle create_socket(void) {
 		usbmuxd_log(LL_FATAL, "ERROR: socket() failed: %s", WSAGetLastError());
 	}
 #else
-	if (unlink(socket_path) == -1 && errno != ENOENT) {
-		usbmuxd_log(LL_FATAL, "unlink(%s) failed: %s", socket_path, strerror(errno));
-		return -1;
-	}
+	if (!tcp) {
+		if (unlink(socket_path) == -1 && errno != ENOENT) {
+			usbmuxd_log(LL_FATAL, "unlink(%s) failed: %s", socket_path, strerror(errno));
+			return -1;
+		}
 
-	listenfd = socket(AF_UNIX, SOCK_STREAM, 0);
-	if (listenfd == -1) {
-		usbmuxd_log(LL_FATAL, "ERROR: socket() failed: %s", strerror(errno));
-		return -1;
+		listenfd = socket(AF_UNIX, SOCK_STREAM, 0);
+		if (listenfd == -1) {
+			usbmuxd_log(LL_FATAL, "ERROR: socket() failed: %s", strerror(errno));
+			return -1;
+		}
+	} else {
+		listenfd = socket(AF_INET, SOCK_STREAM, 0);
+		if (listenfd == -1) {
+			usbmuxd_log(LL_FATAL, "ERROR: socket() failed: %s", strerror(errno));
+			return -1;
+		}
 	}
 #endif
 
@@ -155,24 +166,42 @@ static socket_handle create_socket(void) {
 
 	memset(&bind_addr, 0, sizeof(bind_addr));
 
-#ifdef WIN32  
+#ifdef WIN32
 	bind_addr.sin_family = AF_INET;
 	bind_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	bind_addr.sin_port = htons(USBMUXD_SOCKET_PORT);
 #else
-	bind_addr.sun_family = AF_UNIX;
-	strcpy(bind_addr.sun_path, socket_path);
+	if (tcp) {
+		usbmuxd_log(LL_INFO, "Preparing a TCP socket");
+		tcp_addr.sin_family = AF_INET;
+		tcp_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		tcp_addr.sin_port = htons(USBMUXD_SOCKET_PORT);
+	} else {
+		usbmuxd_log(LL_INFO, "Preparing a Unix socket");
+		bind_addr.sun_family = AF_UNIX;
+		strcpy(bind_addr.sun_path, socket_path);
+	}
 #endif
 
 	usbmuxd_log(LL_INFO, "Binding to socket");
-	if (bind(listenfd, (struct sockaddr*)&bind_addr, sizeof(bind_addr)) != 0) {
 #ifdef WIN32
+	if (bind(listenfd, (struct sockaddr*)&bind_addr, sizeof(bind_addr)) != 0) {
 		usbmuxd_log(LL_FATAL, "bind() failed. WSAGetLastError returned error code %u. Is another process using TCP port %d?", WSAGetLastError(), USBMUXD_SOCKET_PORT);
-#else
-		usbmuxd_log(LL_FATAL, "bind() failed: %s", strerror(errno));
-#endif
 		return -1;
 	}
+#else
+	if (tcp) {
+		if (bind(listenfd, (struct sockaddr*)&tcp_addr, sizeof(tcp_addr)) != 0) {
+			usbmuxd_log(LL_FATAL, "bind() on a Unix socket failed: %s", strerror(errno));
+			return -1;
+		}
+	} else {
+		if (bind(listenfd, (struct sockaddr*)&bind_addr, sizeof(bind_addr)) != 0) {
+			usbmuxd_log(LL_FATAL, "bind() on a TCP socket failed: %s", strerror(errno));
+			return -1;
+		}
+	}
+#endif
 
 	// Start listening
 	usbmuxd_log(LL_INFO, "Starting to listen on socket");
@@ -473,6 +502,7 @@ static void usage()
 	printf("  -h, --help\t\tPrint this message.\n");
 	printf("  -v, --verbose\t\tBe verbose (use twice or more to increase).\n");
 	printf("  -w, --verbose-usb\tEnable libusb logging.\n");
+	printf("  -t, --tcp\t\tCreate a TCP socket (default on Windows).\n");
 	printf("  -f, --foreground\tDo not daemonize (implies one -v).\n");
 	printf("  -U, --user USER\tChange to this user after startup (needs USB privileges).\n");
 	printf("  -n, --disable-hotplug\tDisables automatic discovery of devices on hotplug.\n");
@@ -505,6 +535,7 @@ static void parse_opts(int argc, char **argv)
 		{"foreground", 0, NULL, 'f'},
 		{"verbose", 0, NULL, 'v'},
 		{"verbose-usb", 0, NULL, 'w' },
+		{"tcp", 0, NULL, 't' },
 		{"user", 1, NULL, 'U'},
 		{"disable-hotplug", 0, NULL, 'n'},
 		{"enable-exit", 0, NULL, 'z'},
@@ -522,11 +553,11 @@ static void parse_opts(int argc, char **argv)
 	int c;
 
 #ifdef HAVE_SYSTEMD
-	const char* opts_spec = "hfvVwuU:xXsnz";
+	const char* opts_spec = "hfvVwtuU:xXsnz";
 #elif HAVE_UDEV
-	const char* opts_spec = "hfvVwuU:xXnz";
+	const char* opts_spec = "hfvVwtuU:xXnz";
 #else
-	const char* opts_spec = "hfvVwU:xXnz";
+	const char* opts_spec = "hfvVwtU:xXnz";
 #endif
 
 	while (1) {
@@ -547,6 +578,9 @@ static void parse_opts(int argc, char **argv)
 			break;
 		case 'w':
 			libusb_verbose = 255;
+			break;
+		case 't':
+			tcp = 1;
 			break;
 		case 'V':
 			printf("%s\n", PACKAGE_STRING);
