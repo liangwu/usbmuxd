@@ -69,7 +69,6 @@
 #include <pthread.h>
 #include <signal.h>
 #include "usbmuxd-proto.h"
-#include "usbmuxd.h"
 #include <libusb.h>
 
 #ifdef HAVE_LIBIMOBILEDEVICE
@@ -700,7 +699,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (tcp) {
-		usbmuxd_set_socket_type(SOCKET_TYPE_TCP);
+		idevice_set_socket_type(IDEVICE_SOCKET_TYPE_TCP);
 	}
 #endif
 
