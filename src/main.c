@@ -71,6 +71,10 @@
 #include "usbmuxd-proto.h"
 #include <libusb.h>
 
+#ifdef HAVE_LIBIMOBILEDEVICE
+#include "libimobiledevice/libimobiledevice.h"
+#endif
+
 static const char *socket_path = "/var/run/usbmuxd";
 static const char *lockfile = "/var/run/usbmuxd.pid";
 
@@ -693,6 +697,20 @@ int main(int argc, char *argv[])
 
 	/* set log level to specified verbosity */
 	log_level = verbose;
+
+#ifdef HAVE_LIBIMOBILEDEVICE
+	if (log_level == 0) {
+		// No logging for libimobiledevice
+	}
+	else if (log_level == 1) {
+		usbmuxd_log(LL_NOTICE, "enabling libimobiledevice logging");
+		idevice_set_debug_level(1);
+	}
+	else {
+		usbmuxd_log(LL_NOTICE, "enabling libimobiledevice logging");
+		idevice_set_debug_level(2);
+	}
+#endif
 
 	usbmuxd_log(LL_NOTICE, "usbmuxd v%s starting up", PACKAGE_VERSION);
 	should_exit = 0;
