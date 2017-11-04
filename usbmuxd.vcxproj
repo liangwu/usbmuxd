@@ -238,12 +238,12 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Import Project="packages\dirent.1.13.1\build\native\dirent.targets" Condition="Exists('packages\dirent.1.13.1\build\native\dirent.targets')" />
     <Import Project="packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets" Condition="Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" />
     <Import Project="packages\zlib.1.2.8.7\build\native\zlib.targets" Condition="Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" />
-    <Import Project="packages\libimobiledevice.redist.1.2.1.183\build\native\libimobiledevice.redist.targets" Condition="Exists('packages\libimobiledevice.redist.1.2.1.183\build\native\libimobiledevice.redist.targets')" />
-    <Import Project="packages\libimobiledevice.1.2.1.183\build\native\libimobiledevice.targets" Condition="Exists('packages\libimobiledevice.1.2.1.183\build\native\libimobiledevice.targets')" />
     <Import Project="packages\libplist.redist.2.0.1.171\build\native\libplist.redist.targets" Condition="Exists('packages\libplist.redist.2.0.1.171\build\native\libplist.redist.targets')" />
     <Import Project="packages\libplist.2.0.1.171\build\native\libplist.targets" Condition="Exists('packages\libplist.2.0.1.171\build\native\libplist.targets')" />
     <Import Project="packages\libusbmuxd.redist.1.0.10.86\build\native\libusbmuxd.redist.targets" Condition="Exists('packages\libusbmuxd.redist.1.0.10.86\build\native\libusbmuxd.redist.targets')" />
     <Import Project="packages\libusbmuxd.1.0.10.86\build\native\libusbmuxd.targets" Condition="Exists('packages\libusbmuxd.1.0.10.86\build\native\libusbmuxd.targets')" />
+    <Import Project="packages\libimobiledevice.redist.1.2.1.187\build\native\libimobiledevice.redist.targets" Condition="Exists('packages\libimobiledevice.redist.1.2.1.187\build\native\libimobiledevice.redist.targets')" />
+    <Import Project="packages\libimobiledevice.1.2.1.187\build\native\libimobiledevice.targets" Condition="Exists('packages\libimobiledevice.1.2.1.187\build\native\libimobiledevice.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -258,11 +258,11 @@ copy $(ProjectDir)packages\zlib.redist.1.2.8.7\build\native\bin\v110\x64\Release
     <Error Condition="!Exists('packages\dirent.1.13.1\build\native\dirent.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\dirent.1.13.1\build\native\dirent.targets'))" />
     <Error Condition="!Exists('packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.redist.1.2.8.7\build\native\zlib.redist.targets'))" />
     <Error Condition="!Exists('packages\zlib.1.2.8.7\build\native\zlib.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\zlib.1.2.8.7\build\native\zlib.targets'))" />
-    <Error Condition="!Exists('packages\libimobiledevice.redist.1.2.1.183\build\native\libimobiledevice.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.redist.1.2.1.183\build\native\libimobiledevice.redist.targets'))" />
-    <Error Condition="!Exists('packages\libimobiledevice.1.2.1.183\build\native\libimobiledevice.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.1.2.1.183\build\native\libimobiledevice.targets'))" />
     <Error Condition="!Exists('packages\libplist.redist.2.0.1.171\build\native\libplist.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.redist.2.0.1.171\build\native\libplist.redist.targets'))" />
     <Error Condition="!Exists('packages\libplist.2.0.1.171\build\native\libplist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libplist.2.0.1.171\build\native\libplist.targets'))" />
     <Error Condition="!Exists('packages\libusbmuxd.redist.1.0.10.86\build\native\libusbmuxd.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.redist.1.0.10.86\build\native\libusbmuxd.redist.targets'))" />
     <Error Condition="!Exists('packages\libusbmuxd.1.0.10.86\build\native\libusbmuxd.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libusbmuxd.1.0.10.86\build\native\libusbmuxd.targets'))" />
+    <Error Condition="!Exists('packages\libimobiledevice.redist.1.2.1.187\build\native\libimobiledevice.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.redist.1.2.1.187\build\native\libimobiledevice.redist.targets'))" />
+    <Error Condition="!Exists('packages\libimobiledevice.1.2.1.187\build\native\libimobiledevice.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libimobiledevice.1.2.1.187\build\native\libimobiledevice.targets'))" />
   </Target>
 </Project>
