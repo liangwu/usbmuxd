@@ -69,6 +69,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include "usbmuxd-proto.h"
+#include "usbmuxd.h"
 #include <libusb.h>
 
 #ifdef HAVE_LIBIMOBILEDEVICE
@@ -704,6 +705,10 @@ int main(int argc, char *argv[])
 	else {
 		usbmuxd_log(LL_NOTICE, "enabling libimobiledevice logging");
 		idevice_set_debug_level(2);
+	}
+
+	if (tcp) {
+		usbmuxd_set_socket_type(SOCKET_TYPE_TCP);
 	}
 #endif
 
