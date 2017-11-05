@@ -95,6 +95,7 @@ static int libusb_verbose = 0;
 
 static int foreground = 0;
 static int tcp = 0;
+static int all_interfaces = 0;
 static int drop_privileges = 0;
 static const char *drop_user = NULL;
 static int opt_disable_hotplug = 0;
@@ -178,13 +179,13 @@ static socket_handle create_socket(void) {
 
 #ifdef WIN32
 	bind_addr.sin_family = AF_INET;
-	bind_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	bind_addr.sin_addr.s_addr = all_interfaces == 0 ? inet_addr("127.0.0.1") : inet_addr("0.0.0.0");
 	bind_addr.sin_port = htons(USBMUXD_SOCKET_PORT);
 #else
 	if (tcp) {
 		usbmuxd_log(LL_INFO, "Preparing a TCP socket");
 		tcp_addr.sin_family = AF_INET;
-		tcp_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		tcp_addr.sin_addr.s_addr = all_interfaces == 0 ? inet_addr("127.0.0.1") : inet_addr("0.0.0.0");
 		tcp_addr.sin_port = htons(USBMUXD_SOCKET_PORT);
 	} else {
 		usbmuxd_log(LL_INFO, "Preparing a Unix socket");
@@ -513,6 +514,7 @@ static void usage()
 	printf("  -v, --verbose\t\tBe verbose (use twice or more to increase).\n");
 	printf("  -w, --verbose-usb\tEnable libusb logging.\n");
 	printf("  -t, --tcp\t\tCreate a TCP socket (default on Windows).\n");
+	printf("  -a, --all-interfaces\tCListen on all interfaces for connections (TCP only).\n");
 	printf("  -f, --foreground\tDo not daemonize (implies one -v).\n");
 	printf("  -U, --user USER\tChange to this user after startup (needs USB privileges).\n");
 	printf("  -n, --disable-hotplug\tDisables automatic discovery of devices on hotplug.\n");
@@ -548,6 +550,7 @@ static void parse_opts(int argc, char **argv)
 		{"verbose", no_argument, NULL, 'v'},
 		{"verbose-usb", no_argument, NULL, 'w' },
 		{"tcp", 0, no_argument, 't' },
+		{"all-interfaces", 0, no_argument, 'a' },
 		{"user", required_argument, NULL, 'U'},
 		{"disable-hotplug", no_argument, NULL, 'n'},
 		{"enable-exit", no_argument, NULL, 'z'},
@@ -567,11 +570,11 @@ static void parse_opts(int argc, char **argv)
 	int c;
 
 #ifdef HAVE_SYSTEMD
-	const char* opts_spec = "hfvVwtuU:xXsnzl:p";
+	const char* opts_spec = "hfvVwtauU:xXsnzl:p";
 #elif HAVE_UDEV
-	const char* opts_spec = "hfvVwtuU:xXnzl:p";
+	const char* opts_spec = "hfvVwtauU:xXnzl:p";
 #else
-	const char* opts_spec = "hfvVwtU:xXnzl:p";
+	const char* opts_spec = "hfvVwtaU:xXnzl:p";
 #endif
 
 	while (1) {
@@ -595,6 +598,9 @@ static void parse_opts(int argc, char **argv)
 			break;
 		case 't':
 			tcp = 1;
+			break;
+		case 'a':
+			all_interfaces = 1;
 			break;
 		case 'V':
 			printf("%s\n", PACKAGE_STRING);
