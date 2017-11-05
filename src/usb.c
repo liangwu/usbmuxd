@@ -286,7 +286,7 @@ static int start_rx_loop(struct usb_device *dev)
 	return 0;
 }
 
-static void get_serial_callback(struct libusb_transfer *transfer)
+static void LIBUSB_CALL get_serial_callback(struct libusb_transfer *transfer)
 {
 	unsigned int di, si;
 	struct usb_device *usbdev = transfer->user_data;
@@ -344,7 +344,7 @@ static void get_serial_callback(struct libusb_transfer *transfer)
 	}
 }
 
-static void get_langid_callback(struct libusb_transfer *transfer)
+static void LIBUSB_CALL get_langid_callback(struct libusb_transfer *transfer)
 {
 	int res;
 	struct usb_device *usbdev = transfer->user_data;
