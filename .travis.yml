@@ -70,5 +70,4 @@ after_success:
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-rpm.sh; fi
 - if [ "$CREATE_ALPINE" = "yes" ]; then docker run -v ${PWD}/:/build/ usbmuxd-alpine-build; fi
-- if [ "$CREATE_ALPINE" = "yes" ]; then $az storage blob ubload -f usbmuxd.alpine.tar.gz -c imobiledevice -n usbmuxd-alpine-1.1.0-$TRAVIS_BUILD_NUMBER.alpine.tar.gz; fi
-
+- if [ "$CREATE_ALPINE" = "yes" ]; then $az storage blob upload -f usbmuxd.alpine.tar.gz -c imobiledevice -n usbmuxd-alpine-1.1.0-$TRAVIS_BUILD_NUMBER.alpine.tar.gz; fi
