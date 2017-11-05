@@ -1,12 +1,15 @@
 dist: trusty
 sudo: true
 
+services:
+  - docker
+
 matrix:
   include:
     - os: osx
       env: TARGET=x86_64-apple-darwin RID=osx-x64 RUN_TESTS=yes CROSS=no CREATE_DEB=no
     - os: linux
-      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no ARCH=amd64 CREATE_DEB=yes
+      env: TARGET=x86_64-linux-gnu RID=linux-x64 RUN_TESTS=yes CROSS=no ARCH=amd64 CREATE_DEB=yes CREATE_ALPINE=yes
 
 language: c
 
@@ -54,6 +57,7 @@ script:
 - export LDFLAGS=-L$HOME/ext/lib
 - ./autogen.sh --prefix=$HOME/out --with-udevrulesdir=$HOME/out/lib/udev --host=$TARGET
 - make
+- if [ "$CREATE_ALPINE" = "yes" ]; then docker build alpine --tag usbmuxd-alpine-build; fi
 
 after_success:
 - make install
@@ -65,4 +69,6 @@ after_success:
 - $az storage blob upload -f usbmuxd-$RID.tar.gz -c imobiledevice -n usbmuxd-$RID-1.1.0-$TRAVIS_BUILD_NUMBER.tar.gz
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-rpm.sh; fi
+- if [ "$CREATE_ALPINE" = "yes" ]; then docker run -v ${PWD}/:/build/ usbmuxd-alpine-build; fi
+- if [ "$CREATE_ALPINE" = "yes" ]; then $az storage blob ubload -f usbmuxd.alpine.tar.gz -c imobiledevice -n usbmuxd-alpine-1.1.0-$TRAVIS_BUILD_NUMBER.alpine.tar.gz; fi
 
