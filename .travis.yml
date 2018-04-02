@@ -68,7 +68,6 @@ after_success:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
 - $az storage blob upload -f usbmuxd-$RID.tar.gz -c imobiledevice -n usbmuxd-$RID-1.1.0-$TRAVIS_BUILD_NUMBER.tar.gz
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh bionic; fi
-- if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh precise; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh trusty; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-rpm.sh; fi
