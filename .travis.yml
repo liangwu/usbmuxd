@@ -33,7 +33,8 @@ before_install:
 - test -n $CC && unset CC
 
 install:
-- pip install --user azure-cli
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then pip2 install --user azure-cli; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install --user azure-cli; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install libusb; fi
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/install-patchelf.sh; fi
