@@ -98,8 +98,6 @@ void usbmuxd_log(enum loglevel level, const char *fmt, ...)
 	strftime(fs, 10, "[%H:%M:%S", tp);
 	sprintf(fs + 9, ".%03d][%d] %s\n", (int)(ts.tv_usec / 1000), level, fmt);
 #else
-	tp = localtime(&ts.tv_sec);
-
 	if(log_syslog) {
 		sprintf(fs, "[%d] %s\n", level, fmt);
 	} else {
