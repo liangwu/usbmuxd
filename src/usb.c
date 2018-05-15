@@ -29,9 +29,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <libusb.h>
 #ifdef WIN32
+#include "libusb-1.0/libusb.h"
 #include "usb_win32.h"
+#else
+#include <libusb.h>
 #endif
 
 #include "usb.h"
