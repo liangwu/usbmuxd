@@ -69,7 +69,12 @@
 #include <pthread.h>
 #include <signal.h>
 #include "usbmuxd-proto.h"
+
+#ifdef _MSC_VER
+#include <libusb-1.0/libusb.h>
+#else
 #include <libusb.h>
+#endif
 
 #ifdef HAVE_LIBIMOBILEDEVICE
 #include "libimobiledevice/libimobiledevice.h"
