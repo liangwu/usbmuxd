@@ -188,9 +188,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ws2_32.lib;libusb-1.0.lib;libusb0.lib;pthreadsVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>copy $(SolutionDir)ext\libusbK-3.0.7.0-bin\bin\dll\amd64\libusbK.dll $(OutDir)</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
