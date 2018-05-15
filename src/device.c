@@ -45,7 +45,9 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <pthread.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include "device.h"
 #include "client.h"
 #include "preflight.h"
@@ -339,7 +341,11 @@ static void connection_teardown(struct mux_connection *conn)
 							usbmuxd_log(LL_ERROR, "%s: aborting buffer flush to client after unsuccessfully attempting for %dms.", __func__, (int)(tm_now - tm_last));
 							break;
 						}
+#ifndef _MSC_VER
 						usleep(10000);
+#else
+						Sleep(10);
+#endif
 						continue;
 					}
 					if(size == (int)conn->ib_size) {
