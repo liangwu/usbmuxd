@@ -34,6 +34,7 @@ before_install:
 
 install:
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then pip2 install --user azure-cli; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install --user requests urllib3 pyOpenSSL --force --upgrade; fi
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then pip install --user azure-cli; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install libusb || true; fi
@@ -66,7 +67,7 @@ after_success:
 - tar -zcvf usbmuxd-$RID.tar.gz -C $HOME/out .
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then az=$HOME/Library/Python/2.7/bin/az; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then az=$HOME/.local/bin/az; fi
-- $az storage blob upload -f usbmuxd-$RID.tar.gz -c imobiledevice -n usbmuxd-$RID-1.1.0-$TRAVIS_BUILD_NUMBER.tar.gz
+- $az storage blob upload --file usbmuxd-$RID.tar.gz --container-name imobiledevice --name usbmuxd-$RID-1.1.0-$TRAVIS_BUILD_NUMBER.tar.gz
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh bionic; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh trusty; fi
 - if [[ "$CREATE_DEB" == "yes" ]]; then ./make-deb.sh xenial; fi
