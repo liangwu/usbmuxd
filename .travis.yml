@@ -62,6 +62,7 @@ script:
 
 after_success:
 - make install
+- export INSTALLDIR=$HOME/out
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./build/run-patchelf.sh; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./build/patchdylib.sh; fi
 - tar -zcvf usbmuxd-$RID.tar.gz -C $HOME/out .
