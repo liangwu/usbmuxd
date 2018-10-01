@@ -17,7 +17,7 @@ jobs:
         RID: win7-x64
       x86:
         BUILD_ARCH: x86
-        PLATFORM: x86
+        PLATFORM: Win32
         RID: win7-x86
   pool:
     vmImage: 'vs2017-win2016'
@@ -29,7 +29,6 @@ jobs:
   - script: |
       vcpkg\vcpkg version
       vcpkg\vcpkg integrate install
-      set VCPKG_BUILD_TYPE=release
       vcpkg\vcpkg install libplist:%BUILD_ARCH%-windows libusbmuxd:%BUILD_ARCH%-windows libimobiledevice:%BUILD_ARCH%-windows --head
       vcpkg\vcpkg install libusb:%BUILD_ARCH%-windows libusb-win32:%BUILD_ARCH%-windows pthreads:%BUILD_ARCH%-windows
     displayName: Install native dependencies
@@ -47,7 +46,15 @@ jobs:
     displayName: 'Debug build'
   - script: |
       mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy %BUILD_ARCH%\Release\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\
+      copy %PLATFORM%\Release\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb-1.0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb-usbdk-1.0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libusb\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\libusb.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libusb-win32\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\libusb-win32.copyright
+      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\pthreadsVC2.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
+      copy vcpkg\installed\%BUILD_ARCH%-windows\share\pthreads\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\pthreads.copyright
     displayName: 'Install'
   - task: PublishBuildArtifacts@1
     inputs:
