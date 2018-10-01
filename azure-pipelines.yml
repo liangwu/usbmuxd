@@ -17,7 +17,7 @@ jobs:
         RID: win7-x64
       x86:
         BUILD_ARCH: x86
-        PLATFORM: Win32
+        PLATFORM: x86
         RID: win7-x86
   pool:
     vmImage: 'vs2017-win2016'
