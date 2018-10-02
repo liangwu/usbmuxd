@@ -123,6 +123,9 @@ jobs:
 
       export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID
       ./build/patchdylib.sh
+
+      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
+      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
     displayName: Install
   - task: PublishBuildArtifacts@1
     inputs:
@@ -192,6 +195,9 @@ jobs:
       export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID
       ./build/install-patchelf.sh
       ./build/run-patchelf.sh
+
+      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
+      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
     displayName: Install
   - task: PublishBuildArtifacts@1
     inputs:
