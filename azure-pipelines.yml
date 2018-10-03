@@ -1,9 +1,9 @@
 variables:
-  libplistBuild: 56
+  libplistBuild: 209
   libplistPipeline: 2
-  libusbmuxdBuild: 57
+  libusbmuxdBuild: 214
   libusbmuxdPipeline: 3
-  libimobiledeviceBuild: 66
+  libimobiledeviceBuild: 216
   libimobiledevicePipeline: 4
 
 jobs:
