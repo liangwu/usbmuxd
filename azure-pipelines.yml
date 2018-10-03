@@ -121,6 +121,7 @@ jobs:
   - script: |
       make install
 
+      copy /usr/local/opt/libusb/lib/libusb-1.0.0.dylib $SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID/lib
       export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID
       ./build/patchdylib.sh
 
