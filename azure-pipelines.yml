@@ -186,6 +186,9 @@ jobs:
       export CFLAGS="-I$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/include $CFLAGS"
       export LDFLAGS="-L$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib $LDFLAGS"
 
+      cp $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/libusbmuxd.so $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
+      cp $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/libplist.so $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
+
       ./autogen.sh --prefix=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID --host=$TARGET --with-udevrulesdir=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/lib/udev
       make
     displayName: Build
