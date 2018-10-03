@@ -21,3 +21,5 @@ for f in $INSTALLDIR/sbin/*; do
 
    otool -L $f
 done
+
+install_name_tool -change /usr/local/opt/libusb/lib/libusb-1.0.0.dylib @loader_path/libusb-1.0.0.dylib $INSTALLDIR/sbin/usbmuxd
