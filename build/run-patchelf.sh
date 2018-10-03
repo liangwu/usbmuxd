@@ -15,6 +15,12 @@ for f in $INSTALLDIR/sbin/*; do
    chmod +w $f
 
    $patchelf --set-rpath '${ORIGIN}' $f
+   $patchelf --remove-needed libplist.so.3 $f
+   $patchelf --add-needed libplist.so $f
+
+   $patchelf --remove-needed libusbmuxd.so.4 $f
+   $patchelf --add-needed libusbmuxd.so $f
+
    $patchelf --remove-needed libimobiledevice.so.6 $f
    $patchelf --add-needed libimobiledevice.so $f
 
