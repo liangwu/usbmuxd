@@ -1,7 +1,6 @@
 # usbmuxd-win32
 
-[![Build status](https://ci.appveyor.com/api/projects/status/dka6taye67ww57vf/branch/master-msvc?svg=true)](https://ci.appveyor.com/project/qmfrederik/usbmuxd/branch/master-msvc)
-[![Build Status](https://travis-ci.org/libimobiledevice-win32/usbmuxd.svg?branch=master-msvc)](https://travis-ci.org/libimobiledevice-win32/usbmuxd)
+[![Build Status](https://dev.azure.com/libimobiledevice-win32/imobiledevice-net/_apis/build/status/libimobiledevice-win32.usbmuxd)](https://dev.azure.com/libimobiledevice-win32/imobiledevice-net/_build/latest?definitionId=6)
 
 Provides a native Windows build (using the Visual C++ compiler) of [usbmuxd](http://libimobiledevice.org),
 a socket daemon to multiplex connections from and to iOS devices.
