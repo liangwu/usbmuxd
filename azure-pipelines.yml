@@ -178,6 +178,9 @@ jobs:
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: 'Download libimobiledevice artifacts'
   - script: |
+      lsb_release -a
+    displayName: Check Ubuntu version
+  - script: |
       sudo apt-get install -y libssl-dev libcurl4-openssl-dev libusb-1.0-0-dev
     displayName: Install autotools, openSSL
   - script: |
