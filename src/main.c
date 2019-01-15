@@ -237,8 +237,6 @@ static socket_handle create_socket(void) {
 #else
 static void handle_signal(int sig)
 {
-	usbmuxd_log(LL_NOTICE, "Caught signal %d, exiting", sig);
-	should_exit = 1;
 	if (sig != SIGUSR1 && sig != SIGUSR2) {
 		usbmuxd_log(LL_NOTICE,"Caught signal %d, exiting", sig);
 		should_exit = 1;
