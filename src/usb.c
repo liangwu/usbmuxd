@@ -429,9 +429,6 @@ static int usb_device_add(libusb_device* dev)
 	}
 
 	int desired_config = devdesc.bNumConfigurations;
-	if (desired_config > 4) {
-		desired_config = 4;
-	}
 	int current_config = 0;
 	if((res = libusb_get_configuration(handle, &current_config)) != 0) {
 		usbmuxd_log(LL_WARNING, "Could not get configuration for device %d-%d: %s", bus, address, libusb_strerror(res));
