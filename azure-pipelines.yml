@@ -1,154 +1,22 @@
-variables:
-  libplistBuild: 397
-  libplistPipeline: 2
-  libusbmuxdBuild: 390
-  libusbmuxdPipeline: 3
-  libimobiledeviceBuild: 395
-  libimobiledevicePipeline: 4
-
 jobs:
-- job: windows
-  strategy:
-    maxParallel: 2
-    matrix:
-      x64:
-        BUILD_ARCH: x64
-        PLATFORM: x64
-        RID: win7-x64
-      x86:
-        BUILD_ARCH: x86
-        PLATFORM: Win32
-        RID: win7-x86
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-  - script: |
-      git clone https://github.com/libimobiledevice-win32/vcpkg
-      vcpkg\bootstrap-vcpkg.bat
-    displayName: Install vcpkg
-  - script: |
-      vcpkg\vcpkg version
-      vcpkg\vcpkg integrate install
-      vcpkg\vcpkg install libplist:%BUILD_ARCH%-windows libusbmuxd:%BUILD_ARCH%-windows libimobiledevice:%BUILD_ARCH%-windows --head
-      vcpkg\vcpkg install libusb:%BUILD_ARCH%-windows libusb-win32:%BUILD_ARCH%-windows pthreads:%BUILD_ARCH%-windows
-    displayName: Install native dependencies
-  - task: MSBuild@1
-    inputs:
-      solution: 'usbmuxd.sln' 
-      platform: $(PLATFORM)
-      configuration: Release
-    displayName: 'Release build'
-  - task: MSBuild@1
-    inputs:
-      solution: 'usbmuxd.sln' 
-      platform: $(PLATFORM)
-      configuration: Debug
-    displayName: 'Debug build'
-  - script: |
-      mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      mkdir %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\
-      copy %PLATFORM%\Release\*.exe %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb-1.0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb-usbdk-1.0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libusb\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\libusb.copyright
-      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\libusb0.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy vcpkg\installed\%BUILD_ARCH%-windows\share\libusb-win32\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\libusb-win32.copyright
-      copy vcpkg\installed\%BUILD_ARCH%-windows\bin\pthreadsVC2.dll %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\bin\
-      copy vcpkg\installed\%BUILD_ARCH%-windows\share\pthreads\copyright %BUILD_ARTIFACTSTAGINGDIRECTORY%\usbmuxd\%RID%\licenses\pthreads.copyright
-    displayName: 'Install'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)/usbmuxd/' 
-      artifactName: 'usbmuxd' 
-      publishLocation: 'Container'
-    displayName: Publish
-
 - job: macos
   pool:
-    vmImage: 'xcode9-macos10.13'
+    vmImage: 'macos-10.14'
   variables:
     TARGET: x86_64-apple-darwin
     RID: osx-x64
   steps:
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libplistPipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libplistBuild)
-      downloadType: 'single'
-      artifactName: 'libplist'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libplist artifacts'
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libusbmuxdPipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libusbmuxdBuild)
-      downloadType: 'single'
-      artifactName: 'libusbmuxd'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libusbmuxd artifacts'
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libimobiledevicePipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libimobiledeviceBuild)
-      downloadType: 'single'
-      artifactName: 'libimobiledevice'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libimobiledevice artifacts'
   - script: |
       brew install autoconf automake libtool pkg-config openssl libusb
     displayName: Install autotools, openSSL
   - script: |
-      # Patch the pkg-config files. The path to the artifacts directory includes the version number of the
-      # VSTS agent, which may change.
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig -name '*.pc' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig -name '*.pc' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib/pkgconfig -name '*.pc' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/ -name '*.la' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/ -name '*.la' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-      LC_CTYPE=C LANG=C find $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib/ -name '*.la' -print0 | xargs -0 sed -i -e "s@/Users/vsts/agent/[0-9]*\.[0-9]*\.[0-9]*/work/1/a/@$BUILD_ARTIFACTSTAGINGDIRECTORY/@g"
-
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
+      brew install --head libplist libusbmuxd libimobiledevice
+    displayName: Install libplist, libusbmuxd, libimobiledevice
+  - script: |
       export PKG_CONFIG_PATH="$(brew --prefix)/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"
-
-      pkg-config --variable=prefix libplist
-      pkg-config --variable=prefix libusbmuxd
-      pkg-config --variable=prefix libimobiledevice-1.0
-
-      export CFLAGS="-I$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/include $CFLAGS"
-      export LDFLAGS="-L$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib $LDFLAGS"
-
-      ./autogen.sh --prefix=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID --host=$TARGET --with-udevrulesdir=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/lib/udev
+      ./autogen.sh --host=$TARGET
       make
     displayName: Build
-  - script: |
-      make install
-      mkdir $SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID/lib
-
-      cp /usr/local/opt/libusb/lib/libusb-1.0.0.dylib $SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID/lib
-      export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID
-      ./build/patchdylib.sh
-
-      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
-      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
-    displayName: Install
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)/usbmuxd' 
-      artifactName: 'usbmuxd' 
-      publishLocation: 'Container'
-    displayName: Publish
 
 - job: linux
   variables:
@@ -157,80 +25,26 @@ jobs:
     CFLAGS: -fPIC
   pool:
     vmImage: 'ubuntu-16.04'
+  container:
+    image: ubuntu:18.04
+    options: "--name ci-container -v /usr/bin/docker:/tmp/docker:ro"
   steps:
   - script: |
-      lsb_release -a
-      sudo apt-get remove -y libssl1.1 ant
-      sudo apt-get install -y software-properties-common
-      sudo add-apt-repository --remove -y ppa:ondrej/php
+      /tmp/docker exec -t -u 0 ci-container \
+      sh -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confold" -y install sudo"
+    displayName: Set up sudo
+  - script: |
       sudo apt-get update
-    displayName: Check Ubuntu version, remove non-standard libssl1.1
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libplistPipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libplistBuild)
-      downloadType: 'single'
-      artifactName: 'libplist'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libplist artifacts'
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libusbmuxdPipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libusbmuxdBuild)
-      downloadType: 'single'
-      artifactName: 'libusbmuxd'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libusbmuxd artifacts'
-  - task: DownloadBuildArtifacts@0
-    inputs:
-      buildType: 'specific'
-      project: 'imobiledevice-net'
-      pipeline: $(libimobiledevicePipeline)
-      buildVersionToDownload: 'specific'
-      buildId: $(libimobiledeviceBuild)
-      downloadType: 'single'
-      artifactName: 'libimobiledevice'
-      downloadPath: '$(System.ArtifactsDirectory)'
-    displayName: 'Download libimobiledevice artifacts'
+      sudo apt-get upgrade -y
+      sudo apt-get install -y --no-install-recommends lsb-release automake make libtool clang libssl-dev pkg-config libusb-1.0-0-dev
+    displayName: Install build dependencies
   - script: |
-      sudo apt-get install -y libssl-dev libcurl4-openssl-dev libusb-1.0-0-dev
-    displayName: Install autotools, openSSL
+      echo "deb http://ppa.launchpad.net/quamotion/ppa/ubuntu bionic main" | sudo tee -a  /etc/apt/sources.list.d/quamotion.list
+      sudo apt-key adv --keyserver keyserver.ubuntu.com --recv E25E7A74
+      sudo apt-get update
+      sudo apt-get install -y --no-install-recommends libplist-dev libplist++-dev libusbmuxd-dev libimobiledevice-dev
+    displayName: Install libplist, libusbmuxd, libimobiledevice
   - script: |
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
-      export PKG_CONFIG_PATH="$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib/pkgconfig:$PKG_CONFIG_PATH"
-
-      export CFLAGS="-I$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/include $CFLAGS"
-      export LDFLAGS="-L$SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib $LDFLAGS"
-
-      cp $SYSTEM_ARTIFACTSDIRECTORY/libusbmuxd/$RID/lib/libusbmuxd.so $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
-      cp $SYSTEM_ARTIFACTSDIRECTORY/libplist/$RID/lib/libplist.so $SYSTEM_ARTIFACTSDIRECTORY/libimobiledevice/$RID/lib
-
-      ./autogen.sh --prefix=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID --host=$TARGET --with-udevrulesdir=$BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/lib/udev
+      ./autogen.sh --host=$TARGET
       make
     displayName: Build
-  - script: |
-      make install
-
-      export INSTALLDIR=$SYSTEM_ARTIFACTSDIRECTORY/usbmuxd/$RID
-      ./build/install-patchelf.sh
-      ./build/run-patchelf.sh
-
-      echo $BUILD_REPOSITORY_URI\n >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
-      echo $BUILD_SOURCEVERSION >> $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/$RID/gitinfo
-    displayName: Install
-  - script: |
-      git archive --format tar.gz -o $BUILD_ARTIFACTSTAGINGDIRECTORY/usbmuxd/usbmuxd.orig.tar.gz $BUILD_SOURCEVERSION
-    displayName: Build source tarball
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)/usbmuxd'
-      artifactName: 'usbmuxd'
-      publishLocation: 'Container'
-    displayName: Publish
