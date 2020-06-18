@@ -36,7 +36,7 @@ jobs:
   - script: |
       sudo apt-get update
       sudo apt-get upgrade -y
-      sudo apt-get install -y --no-install-recommends lsb-release automake make libtool clang libssl-dev pkg-config libusb-1.0-0-dev
+      sudo apt-get install -y --no-install-recommends lsb-release automake make libtool clang libssl-dev pkg-config libusb-1.0-0-dev gnupg
     displayName: Install build dependencies
   - script: |
       echo "deb http://ppa.launchpad.net/quamotion/ppa/ubuntu bionic main" | sudo tee -a  /etc/apt/sources.list.d/quamotion.list
