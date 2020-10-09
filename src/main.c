@@ -730,7 +730,7 @@ int main(int argc, char *argv[])
 	should_discover = 0;
 
 #ifdef WIN32
-	mutex = CreateMutex(NULL, TRUE, "usbmuxd");
+	mutex = CreateMutex(NULL, TRUE, "Wormhole_Usbmuxd");
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
 	{
 		usbmuxd_log(LL_ERROR, "Another instance is already running. Exiting.");
