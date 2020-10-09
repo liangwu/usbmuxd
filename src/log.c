@@ -89,7 +89,7 @@ void usbmuxd_log(enum loglevel level, const char *fmt, ...)
 	fs = malloc(20 + strlen(fmt));
 
 #ifdef WIN32
-	struct timeval ts;	
+	struct timeval ts = {0};
 	struct tm *tp;
 	time_t ltime;
 	time(&ltime);
