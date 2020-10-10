@@ -38,6 +38,7 @@
 #include <winsock2.h>
 #include "winsock2-ext.h"
 #include <windows.h>
+#include <tlhelp32.h>
 #else
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -110,6 +111,9 @@ static int exit_signal = 0;
 static int daemon_pipe;
 
 static int report_to_parent = 0;
+
+static int no_find_count = 0;
+static const char* process_name = NULL;
 
 #ifdef WIN32
 #define socket_handle SOCKET
@@ -307,10 +311,47 @@ static int ppoll(struct WSAPoll *fds, nfds_t nfds, int timeout)
 }
 #endif
 
+static void check_process(char* pName) {
+	BOOL find = FALSE;
+	PROCESSENTRY32 currentProcess;
+	currentProcess.dwSize = sizeof(currentProcess);
+	HANDLE hProcess = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+	if (hProcess == INVALID_HANDLE_VALUE)
+	{
+		usbmuxd_log(LL_FLOOD, "CreateToolhelp32Snapshot() invoke fail!");
+		return;
+	}
+
+	BOOL bMore = Process32First(hProcess, &currentProcess);
+	while (bMore)
+	{
+		if (!_tcsicmp(currentProcess.szExeFile, pName)) {
+			find = TRUE;
+			break;
+		}
+		bMore = Process32Next(hProcess, &currentProcess);
+	}
+
+	CloseHandle(hProcess);
+
+	if (!find) {
+		usbmuxd_log(LL_FLOOD, "check_process() no find %s, no_find_count=%d", pName, no_find_count);
+		no_find_count = no_find_count + 1;
+		if (no_find_count >= 4) {
+			should_exit = 1;
+		}
+	}
+	else {
+		no_find_count = 0;
+	}
+}
+
 static int main_loop(int listenfd)
 {
 	int to, cnt, i, dto;
 	struct fdlist pollfds;
+	ULONGLONG time = 0;
 
 #ifndef WIN32
 	struct timespec tspec;
@@ -399,6 +440,15 @@ static int main_loop(int listenfd)
 				}
 			}
 		}
+
+		if (process_name != NULL) {
+			ULONGLONG nowTime = GetTickCount64();
+			if (nowTime - time >= 5000) {
+				time = nowTime;
+				check_process(process_name);
+			}
+		}
+
 	}
 	fdlist_free(&pollfds);
 	return 0;
@@ -573,6 +623,7 @@ static void parse_opts(int argc, char **argv)
 		{"force-exit", no_argument, NULL, 'X'},
 		{"logfile", required_argument, NULL, 'l'},
 		{"version", no_argument, NULL, 'V'},
+		{"name", required_argument, NULL, 'm'},
 		{NULL, 0, NULL, 0}
 	};
 	int c;
@@ -582,7 +633,7 @@ static void parse_opts(int argc, char **argv)
 #elif HAVE_UDEV
 	const char* opts_spec = "hfvVwtauU:xXnzl:p";
 #else
-	const char* opts_spec = "hfvVwtaU:xXnzl:p";
+	const char* opts_spec = "hfvVwtaU:xXnzl:pm:";
 #endif
 
 	while (1) {
@@ -665,6 +716,9 @@ static void parse_opts(int argc, char **argv)
 			} else {
 				use_logfile = 1;
 			}
+			break;
+		case 'm':
+			process_name = optarg;
 			break;
 		default:
 			usage();
