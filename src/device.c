@@ -480,20 +480,19 @@ static int send_tcp_ack(struct mux_connection *conn)
  *   the client is ready to receive data, POLLIN that it has
  *   data to be read (and send along to the device).
  */
-int device_client_process(int device_id, struct mux_client *client, short events)
+void device_client_process(int device_id, struct mux_client *client, short events)
 {
 	pthread_mutex_lock(&device_list_mutex);
 	struct mux_connection *conn = get_mux_connection(device_id, client);
 	pthread_mutex_unlock(&device_list_mutex);
 	if(!conn) {
 		usbmuxd_log(LL_WARNING, "Could not find connection for device %d client %p", device_id, client);
-		return 0;
+		return;
 	}
 	usbmuxd_log(LL_SPEW, "device_client_process (%d)", events);
 
 	int res;
 	int size;
-	BOOL need_sleep = TRUE;
 	if((events & POLLOUT) && conn->ib_size > 0) {
 		// Client is ready to receive data, send what we have
 		// in the client's connection buffer (if there is any)
@@ -501,7 +500,7 @@ int device_client_process(int device_id, struct mux_client *client, short events
 		if(size <= 0) {
 			usbmuxd_log(LL_DEBUG, "error writing to client (%d)", size);
 			connection_teardown(conn);
-			return 0;
+			return;
 		}
 		conn->tx_ack += size;
 		if(size == (int)conn->ib_size) {
@@ -510,8 +509,6 @@ int device_client_process(int device_id, struct mux_client *client, short events
 			conn->ib_size -= size;
 			memmove(conn->ib_buf, conn->ib_buf + size, conn->ib_size);
 		}
-
-		need_sleep = FALSE;
 	}
 	if((events & POLLIN) && conn->sendable > 0) {
 		// There is inbound trafic on the client socket,
@@ -523,21 +520,17 @@ int device_client_process(int device_id, struct mux_client *client, short events
 				usbmuxd_log(LL_DEBUG, "error reading from client (%d)", size);
 			}
 			connection_teardown(conn);
-			return 0;
+			return;
 		}
 		res = send_tcp(conn, TH_ACK, conn->ob_buf, size);
 		if(res < 0) {
 			connection_teardown(conn);
-			return 0;
+			return;
 		}
 		conn->tx_seq += size;
-
-		need_sleep = FALSE;
 	}
 
 	update_connection(conn);
-
-	return need_sleep;
 }
 
 /**

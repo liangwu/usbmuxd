@@ -40,7 +40,7 @@ void client_device_paired(int device_id);
 
 int client_accept(int fd);
 void client_get_fds(struct fdlist *list);
-int client_process(int fd, short events);
+void client_process(int fd, short events);
 
 void client_init(void);
 void client_shutdown(void);
