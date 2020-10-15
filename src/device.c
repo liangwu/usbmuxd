@@ -719,6 +719,7 @@ static void device_tcp_input(struct mux_device *dev, struct tcphdr *th, unsigned
 			if(client_notify_connect(conn->client, RESULT_OK) < 0) {
 				conn->client = NULL;
 				connection_teardown(conn);
+				return;
 			}
 			update_connection(conn);
 		}
