@@ -416,9 +416,11 @@ static int main_loop(int listenfd)
 			device_check_timeouts();
 #endif
 		} else {
+			BOOL need_sleep = TRUE;
 			int done_usb = 0;
 			for(i=0; i<pollfds.count; i++) {
 				if(pollfds.fds[i].revents) {
+					need_sleep = FALSE;
 					if(!done_usb && pollfds.owners[i] == FD_USB) {
 						if(usb_process() < 0) {
 							usbmuxd_log(LL_FATAL, "usb_process() failed");
@@ -435,9 +437,12 @@ static int main_loop(int listenfd)
 						}
 					}
 					if(pollfds.owners[i] == FD_CLIENT) {
-						client_process(pollfds.fds[i].fd, pollfds.fds[i].revents);
+						need_sleep = client_process(pollfds.fds[i].fd, pollfds.fds[i].revents);
 					}
 				}
+			}
+			if (need_sleep) {
+				Sleep(10);
 			}
 		}
 

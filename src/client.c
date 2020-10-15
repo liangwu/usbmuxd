@@ -985,7 +985,7 @@ static void process_recv(struct mux_client *client)
 	client->ib_size = 0;
 }
 
-void client_process(int fd, short events)
+int client_process(int fd, short events)
 {
 	struct mux_client *client = NULL;
 	pthread_mutex_lock(&client_list_mutex);
@@ -999,20 +999,22 @@ void client_process(int fd, short events)
 
 	if(!client) {
 		usbmuxd_log(LL_INFO, "client_process: fd %d not found in client list", fd);
-		return;
+		return 0;
 	}
 
 	if(client->state == CLIENT_CONNECTED) {
 		usbmuxd_log(LL_SPEW, "client_process in CONNECTED state");
-		device_client_process(client->connect_device, client, events);
+		return device_client_process(client->connect_device, client, events);
 	} else {
 		if(events & POLLIN) {
 			process_recv(client);
 		} else if(events & POLLOUT) { //not both in case client died as part of process_recv
 			process_send(client);
+		} else {
+			return 1;
 		}
 	}
-
+	return 0;
 }
 
 void client_device_add(struct device_info *dev)
