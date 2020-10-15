@@ -1,4 +1,4 @@
-/*
+﻿/*
  * device.c
  *
  * Copyright (C) 2009 Hector Martin "marcan" <hector@marcansoft.com>
@@ -528,6 +528,10 @@ void device_client_process(int device_id, struct mux_client *client, short event
 			return;
 		}
 		conn->tx_seq += size;
+	}
+	if (events & (POLLERR | POLLHUP)) {
+		connection_teardown(conn);
+		return;
 	}
 
 	update_connection(conn);

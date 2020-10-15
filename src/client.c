@@ -1,4 +1,4 @@
-/*
+﻿/*
  * client.c
  *
  * Copyright (C) 2009 Hector Martin <hector@marcansoft.com>
@@ -1010,6 +1010,8 @@ void client_process(int fd, short events)
 			process_recv(client);
 		} else if(events & POLLOUT) { //not both in case client died as part of process_recv
 			process_send(client);
+		} else if (events & (POLLERR | POLLHUP)) {
+			client_close(client);
 		}
 	}
 
