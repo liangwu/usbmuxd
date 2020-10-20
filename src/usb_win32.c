@@ -1,4 +1,4 @@
-#ifdef WIN32
+﻿#ifdef WIN32
 #include "usb_win32.h"
 #include <stdint.h>
 #include <lusb0_usb.h>
@@ -100,6 +100,9 @@ usb_dev_handle *usb_win32_open(const char serial[])
 			}
 
 			usb_dev_handle *handle = usb_open(dev);
+			if (!handle) {
+				continue;
+			}
 
 			char dev_serial[40];
 			int ret = usb_get_string_simple(handle, dev->descriptor.iSerialNumber, dev_serial, sizeof(dev_serial));
