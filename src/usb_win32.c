@@ -82,6 +82,9 @@ usb_dev_handle *usb_win32_open(const char serial[])
 
 	EnterCriticalSection(&usb_lock);
 
+	usb_find_busses(); /* find all busses */
+	usb_find_devices(); /* find all connected devices */
+
 	bus = usb_get_busses();
 
 	for (bus; bus; bus = bus->next)

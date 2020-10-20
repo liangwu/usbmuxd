@@ -423,7 +423,7 @@ static int usb_device_add(libusb_device* dev)
 			usbmuxd_log(LL_WARNING, "Could not open device %d-%d. Libusb has reported it does not support the device. If on Windows, did you install the libusb drivers for the device?", bus, address, libusb_strerror(res));
 		}
 		else {
-			usbmuxd_log(LL_WARNING, "Could not open device %d-%d: %d", bus, address, libusb_error_name(res));
+			usbmuxd_log(LL_WARNING, "Could not open device %d-%d: %s", bus, address, libusb_error_name(res));
 		}
 		return -1;
 	}
