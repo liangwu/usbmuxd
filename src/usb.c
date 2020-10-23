@@ -228,7 +228,13 @@ static void LIBUSB_CALL rx_callback(struct libusb_transfer *xfer)
 	struct usb_device *dev = xfer->user_data;
 	usbmuxd_log(LL_SPEW, "RX callback dev %d-%d len %d status %d", dev->bus, dev->address, xfer->actual_length, xfer->status);
 	if(xfer->status == LIBUSB_TRANSFER_COMPLETED) {
-		device_data_input(dev, xfer->buffer, xfer->actual_length);
+		if (device_data_input(dev, xfer->buffer, xfer->actual_length) < 0) {
+			free(xfer->buffer);
+			collection_remove(&dev->rx_xfers, xfer);
+			libusb_free_transfer(xfer);
+			dev->alive = 0;
+			return;
+		}
 		libusb_submit_transfer(xfer);
 	} else {
 		switch(xfer->status) {

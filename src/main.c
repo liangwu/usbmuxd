@@ -414,6 +414,9 @@ static int main_loop(int listenfd)
 				return -1;
 			}
 			device_check_timeouts();
+#else
+		} else if (cnt == 0) {
+			Sleep(100);
 #endif
 		} else {
 			int done_usb = 0;

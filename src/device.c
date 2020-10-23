@@ -746,7 +746,7 @@ static void device_tcp_input(struct mux_device *dev, struct tcphdr *th, unsigned
  * @param buffer
  * @param length
  */
-void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_t length)
+int device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_t length)
 {
 	struct mux_device *dev = NULL;
 	pthread_mutex_lock(&device_list_mutex);
@@ -759,16 +759,16 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 	pthread_mutex_unlock(&device_list_mutex);
 	if(!dev) {
 		usbmuxd_log(LL_WARNING, "Cannot find device entry for RX input from USB device %p on location 0x%x", usbdev, usb_get_location(usbdev));
-		return;
+		return -1;
 	}
 
 	if(!length)
-		return;
+		return 0;
 
 	// sanity check (should never happen with current USB implementation)
 	if((length > USB_MRU) || (length > DEV_MRU)) {
 		usbmuxd_log(LL_ERROR, "Too much data received from USB (%d), file a bug", length);
-		return;
+		return 0;
 	}
 
 	usbmuxd_log(LL_SPEW, "Mux data input for device %p: %p len %d", dev, buffer, length);
@@ -778,7 +778,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 		if((length + dev->pktlen) > DEV_MRU) {
 			usbmuxd_log(LL_ERROR, "Incoming split packet is too large (%d so far), dropping!", length + dev->pktlen);
 			dev->pktlen = 0;
-			return;
+			return 0;
 		}
 		memcpy(dev->pktbuf + dev->pktlen, buffer, length);
 		struct mux_header *mhdr = (struct mux_header *)dev->pktbuf;
@@ -790,7 +790,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 		} else {
 			dev->pktlen += length;
 			usbmuxd_log(LL_SPEW, "Appended mux data to buffer (total size: %d)", dev->pktlen);
-			return;
+			return 0;
 		}
 	} else {
 		struct mux_header *mhdr = (struct mux_header *)buffer;
@@ -798,7 +798,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 			memcpy(dev->pktbuf, buffer, length);
 			dev->pktlen = length;
 			usbmuxd_log(LL_SPEW, "Copied mux data to buffer (size: %d)", dev->pktlen);
-			return;
+			return 0;
 		}
 	}
 
@@ -806,7 +806,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 	int mux_header_size = ((dev->version < 2) ? 8 : sizeof(struct mux_header));
 	if(ntohl(mhdr->length) != length) {
 		usbmuxd_log(LL_ERROR, "Incoming packet size mismatch (dev %d, expected %d, got %d)", dev->id, ntohl(mhdr->length), length);
-		return;
+		return 0;
 	}
 
 	struct tcphdr *th;
@@ -821,7 +821,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 		case MUX_PROTO_VERSION:
 			if(length < (mux_header_size + sizeof(struct version_header))) {
 				usbmuxd_log(LL_ERROR, "Incoming version packet is too small (%d)", length);
-				return;
+				return 0;
 			}
 			device_version_input(dev, (struct version_header *)((char*)mhdr+mux_header_size));
 			break;
@@ -833,7 +833,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 		case MUX_PROTO_TCP:
 			if(length < (mux_header_size + sizeof(struct tcphdr))) {
 				usbmuxd_log(LL_ERROR, "Incoming TCP packet is too small (%d)", length);
-				return;
+				return 0;
 			}
 			th = (struct tcphdr *)((char*)mhdr+mux_header_size);
 			payload = (unsigned char *)(th+1);
@@ -844,7 +844,7 @@ void device_data_input(struct usb_device *usbdev, unsigned char *buffer, uint32_
 			usbmuxd_log(LL_ERROR, "Incoming packet for device %d has unknown protocol 0x%x)", dev->id, ntohl(mhdr->protocol));
 			break;
 	}
-
+	return 0;
 }
 
 int device_add(struct usb_device *usbdev)

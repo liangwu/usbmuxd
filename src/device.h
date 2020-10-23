@@ -31,7 +31,7 @@ struct device_info {
 	uint64_t speed;
 };
 
-void device_data_input(struct usb_device *dev, unsigned char *buf, uint32_t length);
+int device_data_input(struct usb_device *dev, unsigned char *buf, uint32_t length);
 
 int device_add(struct usb_device *dev);
 void device_remove(struct usb_device *dev);
